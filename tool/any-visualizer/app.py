@@ -1,16 +1,22 @@
-### Force python 2.7 to work with utf-8
+# Force python 2.7 to work with utf-8
 import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
-### All imports
-import  os, csv, re, json, imp, threading, subprocess, uuid, iugaMod
-from    flask       import Flask, render_template, request, send_from_directory
-from    werkzeug    import secure_filename
+import os
+import csv
+import re
+import json
+import imp
+import threading
+import subprocess
+import uuid
+import iugaMod
+from flask import Flask, render_template, request, send_from_directory
+from werkzeug import secure_filename
 
 app = Flask(__name__)
 
 # Directories config
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+APP_ROOT = os.path.dirname(os.path.abspath(
+    __file__))   # refers to application_top
 APP_TMP = os.path.join(APP_ROOT, 'tmp')
 APP_ANALYSIS = os.path.join(APP_ROOT, 'dataanalysis')
 
@@ -31,6 +37,8 @@ try:
 except:
     os.mkdir(dir)
 # Send no-cache request in header
+
+
 @app.after_request
 def add_header(r):
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -38,6 +46,7 @@ def add_header(r):
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
+
 
 def run_script(id):
     global controleRun
@@ -55,9 +64,11 @@ def run_script(id):
     subprocess.call(["python", archivedir])
     background_scripts[id] = True
 
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+
 
 def file_proc():
     global datasettype
@@ -74,7 +85,7 @@ def file_proc():
             else:
                 examplevalues = row
                 break
-    #Select numeric fields and add to options list
+    # Select numeric fields and add to options list
     for index, value in enumerate(examplevalues):
         try:
             float(value)
@@ -90,7 +101,8 @@ def file_proc():
         options.append(tempoptions[2])
         datasettype = 2
     print("DATASET: ", datasettype)
-    #Select in options list the possible values for lat and long, if not found show all int values
+    # Select in options list the possible values for lat and long, if not
+    # found show all int values
     for index, value in enumerate(tempoptions):
         if(value.find("lat") != -1):
             mapsoptions.append(tempoptions[index])
@@ -112,6 +124,7 @@ def file_proc():
         mapsoptions = options
     return render_template('select.html', option_list=options, mapsoptions=mapsoptions)
 
+
 @app.route('/')
 def index():
     formatsmsg = 'Only accept: '
@@ -119,13 +132,17 @@ def index():
         formatsmsg += ' ' + x.upper()
     return render_template('index.html', formatsmsg=formatsmsg)
 
+
 @app.route('/selectdata', methods=['POST', 'GET'])
 def selectdata():
     global datasettype
     print(request.form.get('filter1'), request.form.get('filter2'))
-    filter = [request.form.get('filter1'), request.form.get('filter2'),request.form.get('filter3'), request.form.get('filter4')]
-    positions = [request.form.get('latitude1'),  request.form.get('longitude1'),  request.form.get('latitude2'),  request.form.get('longitude2')]
+    filter = [request.form.get('filter1'), request.form.get(
+        'filter2'), request.form.get('filter3'), request.form.get('filter4')]
+    positions = [request.form.get('latitude1'),  request.form.get(
+        'longitude1'),  request.form.get('latitude2'),  request.form.get('longitude2')]
     return render_template('charts.html', csvfilename='arquivo.csv', filter=filter, positions=positions, datasettype=datasettype)
+
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -144,27 +161,32 @@ def upload():
     else:
         return render_template('index.html', formatsmsg='Format not suported! Try again!')
 
+
 @app.route('/<path:directory>')
 def sendfiles(directory):
     return send_from_directory(APP_ROOT, directory)
 
+
 @app.route('/isfinish', methods=['POST'])
 def sendstatus():
     global controleRun
-    if background_scripts[controleRun] == True:
-        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
+    if background_scripts[controleRun]:
+        return json.dumps({'success': False}), 200, {'ContentType': 'application/json'}
     else:
-        return json.dumps({'success':True}), 201, {'ContentType':'application/json'}
+        return json.dumps({'success': True}), 201, {'ContentType': 'application/json'}
+
 
 @app.route('/runiuga', methods=['GET'])
 def runiuga():
-#Import IUGA   - Configs
+    # Import IUGA   - Configs
     input_g = int(request.args.get('pointchose'))
-    time_limit = int(request.args.get('timelimit'))# in miliseconds
+    time_limit = int(request.args.get('timelimit'))  # in miliseconds
     k = int(request.args.get('kvalue'))            # number of returned records
     lowest_acceptable_similarity = float(request.args.get('sigma'))
-    compostReturn = iugaMod.runIuga(input_g, k, time_limit, lowest_acceptable_similarity)
-    return json.dumps({"similarity": compostReturn[0], "diversity": compostReturn[1], "array": (compostReturn[2])}), 200, {'ContentType':'application/json'}
+    compostReturn = iugaMod.runIuga(
+        input_g, k, time_limit, lowest_acceptable_similarity)
+    return json.dumps({"similarity": compostReturn[0], "diversity": compostReturn[1], "array": (compostReturn[2])}), 200, {'ContentType': 'application/json'}
 
 
-app.run(use_reloader=True, port=8080)
+if __name__ == '__main__':
+    app.run(use_reloader=True, port=8080)
