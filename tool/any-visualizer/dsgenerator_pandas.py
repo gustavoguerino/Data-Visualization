@@ -1,5 +1,6 @@
 import pandas as pd
 import math
+import arrow
 
 
 def harvestine_distance(lat1, lng1, lat2, lng2):
@@ -15,12 +16,17 @@ def harvestine_distance(lat1, lng1, lat2, lng2):
     except:
         return 0
 
-df = pd.read_csv('tmp/arquivo.csv', parse_dates=[2, 3])
+df = pd.read_csv('tmp/arquivo.csv')
 
 df = df[((40.495730 < df['start station latitude']) & (df['start station latitude'] < 40.915031)) &
         ((40.495730 < df['end station latitude']) & (df['end station latitude'] < 40.915031)) &
         ((-74.255698 < df['end station longitude']) & (df['end station longitude'] < -73.700208)) &
         ((-74.255698 < df['start station longitude']) & (df['start station longitude'] < -73.700208))]
+
+df['starttime'] = df['starttime'].apply(
+    lambda x: arrow.get(x, 'M/D/YYYY HH:mm:ss').isoformat())
+df['stoptime'] = df['stoptime'].apply(
+    lambda x: arrow.get(x, 'M/D/YYYY HH:mm:ss').isoformat())
 
 df_ends = df.copy()
 
@@ -52,7 +58,8 @@ df = df.append(df_ends, ignore_index=True)
 
 del df_ends
 
-df.to_csv('pandas.index.csv', index_label='id')
+# df.to_csv('pandas.index.csv', index_label='id')
+df.to_hdf('pandas.store.h5', 'index', format='fixed')
 
 bigger_distance = 0
 
@@ -62,7 +69,7 @@ x = 1
 n = len(df)
 
 for row_a in df.itertuples():
-    print('Left:', n - x)
+    # print('Left:', n - x)
     for row_b in df_aux.loc[x:].itertuples():
         distance = harvestine_distance(row_a[1], row_a[2],
                                        row_b[1], row_b[2])
@@ -76,7 +83,9 @@ del df_aux
 df_ds = pd.DataFrame(
     ds, columns=['id_a', 'id_b', 'distance', 'similarity']
 ).assign(
-    distance=lambda x: x.distance/bigger_distance,
-    similarity=lambda x: x.similarity/bigger_distance
+    distance=lambda x: x.distance / bigger_distance,
+    similarity=lambda x: x.similarity / bigger_distance
 )
-df_ds.to_csv('pandas.ds.csv', index=False)
+
+# df_ds.to_csv('pandas.ds.csv', index=False)
+df_ds.to_hdf('pandas.store.h5', 'ds', format='fixed')
