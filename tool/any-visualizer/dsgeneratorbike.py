@@ -72,6 +72,8 @@ def setBiggerValue(disval, simval):
 # East Limit: 40.739040, -73.700208
 # South Limit:  40.495730, -74.248575
 # West Limit: 40.508258, -74.255698
+
+
 def ignorePoint(p1, p2, p3, p4):
     try:
         if((p1 < 40.495730) or (p1 > 40.915031) or (p3 < 40.495730) or (p3 > 40.915031)):
@@ -80,7 +82,7 @@ def ignorePoint(p1, p2, p3, p4):
             return True
         else:
             return False
-    except:
+    except Exception as ex:
         return True
 
 # "0tripduration","1starttime","2stoptime","3start station id","4start station name",
@@ -115,19 +117,34 @@ for row in iter(input_dataset.readline, ''):
     row = row.replace('"', '')  # Remove all quotes
     reading_line = row.split(",")
     try:
-        if(ignorePoint(float(reading_line[latpick]), float(reading_line[longpick]), float(reading_line[latdrop]), float(reading_line[longdrop]))):
+        if (ignorePoint(float(reading_line[latpick]),
+                        float(reading_line[longpick]),
+                        float(reading_line[latdrop]),
+                        float(reading_line[longdrop]))):
             ignoreIndex += 2
-            print(float(reading_line[latpick]), float(reading_line[longpick]), float(
-                reading_line[latdrop]), float(reading_line[longdrop]))
+            print(float(reading_line[latpick]), float(reading_line[longpick]),
+                  float(reading_line[latdrop]), float(reading_line[longdrop]))
         else:
-            index.writerow([(countlines * 2) - 1 - ignoreIndex, countlines, reading_line[
-                           latpick], reading_line[longpick], reading_line[pickup_datetime], 1])
-            index.writerow([(countlines * 2) - ignoreIndex, countlines, reading_line[
-                           latdrop], reading_line[longdrop], reading_line[dropoff_datetime], 0])
-    except:
+            index.writerow([
+                (countlines * 2) - 1 - ignoreIndex,
+                countlines,
+                reading_line[latpick],
+                reading_line[longpick],
+                reading_line[pickup_datetime],
+                1
+            ])
+            index.writerow([
+                (countlines * 2) - ignoreIndex,
+                countlines,
+                reading_line[latdrop],
+                reading_line[longdrop],
+                reading_line[dropoff_datetime],
+                0
+            ])
+    except Exception as ex:
         ignoreIndex += 2
-        print(float(reading_line[latdrop]), reading_line[
-              longdrop], reading_line[latdrop], reading_line[longdrop])
+        print(float(reading_line[latdrop]), float(reading_line[longdrop]),
+              float(reading_line[latdrop]), float(reading_line[longdrop]))
 
 #-------------------------------------------------------------------------
 #----------------------------    Reading Data Set again    ---------------
@@ -135,7 +152,8 @@ for row in iter(input_dataset.readline, ''):
 
 # reading generated index.csv
 print("Creating index_aux.csv to calculate similarities...")
-shutil.copy2('dataanalysis/index.csv', 'tmp/index_aux.csv')
+shutil.copyfile('dataanalysis/index.csv', 'tmp/index_aux.csv')
+
 
 print("Re-opening index.csv to start operations...")
 _index = open('dataanalysis/index.csv')
@@ -145,17 +163,16 @@ _index_features = _index.readline().split(",")
 #----------------------------    Calculating Similarities    -------------
 #-------------------------------------------------------------------------
 
-
 # indexes
 #index.writerow(['p_index', 'dataset_line_index' , 'latitude', 'longitude', 'hour', 'duration', 'isPickUp'])
-p_index, dataset_line_index, latitude, longitude, hour, duration, isPickUp = [
-    0, 1, 2, 3, 4, 5, 6]
+p_index, dataset_line_index, latitude,\
+    longitude, hour, duration, isPickUp = range(7)
 pointValue = 1
 aux_pointValue = 1
 
 _index = _index.readlines()
 print("Starting to calculate the similarities ...")
-for i in range(0, countlines):
+for i in range(countlines):
     _index_values = _index[i].split(",")
     # INDEX_AUX
     #print("Opening index_aux.csv to start operations...")
@@ -163,20 +180,28 @@ for i in range(0, countlines):
     index_aux_features = index_aux.readline().split(",")
 
     index_aux = index_aux.readlines()
-    print(
-        "Still calculating the similarities [missing features...]", (countlines - pointValue))
+    print("Still calculating the similarities [missing features...]",
+          (countlines - pointValue))
     for j in range(pointValue, countlines):
         index_aux_values = index_aux[j].split(",")
         #partsimilarity =  (  (int(_index_values[passenger]) + int(index_aux_values[passenger])) + (getHour(_index_values[hour]) / getHour(index_aux_values[hour]))  )
         #partsimilarity =  ((int(index_aux_values[passenger]) * 2) + 1)
-        distance = harvestine_distance(float(_index_values[latitude]), float(_index_values[
-                                       longitude]), float(index_aux_values[latitude]), float(index_aux_values[longitude]))
+        distance = harvestine_distance(float(_index_values[latitude]),
+                                       float(_index_values[longitude]),
+                                       float(index_aux_values[latitude]),
+                                       float(index_aux_values[longitude]))
 
-        similarity = harvestine_distance(float(_index_values[latitude]), float(_index_values[
-                                         longitude]), float(index_aux_values[latitude]), float(index_aux_values[longitude]))
+        similarity = harvestine_distance(float(_index_values[latitude]),
+                                         float(_index_values[longitude]),
+                                         float(index_aux_values[latitude]),
+                                         float(index_aux_values[longitude]))
 
-        temp.writerow([_index_values[p_index], index_aux_values[
-                      p_index], distance, similarity])
+        temp.writerow([
+            _index_values[p_index],
+            index_aux_values[p_index],
+            distance,
+            similarity])
+
         setBiggerValue(distance, similarity)
 
     pointValue += 1
@@ -237,25 +262,25 @@ with open('dataanalysis/ds.csv') as f7:
     for row in csv.reader(f7):
         row2 = float(row[2])
         row3 = float(row[3])
-        if((row3 >= 0.0) and (row3 < 0.1)):
+        if (0.0 <= row3 < 0.1):
             arquivos[0].writerow([row[0], row[1]])
-        elif((row3 >= 0.1) and (row3 < 0.2)):
+        elif (0.1 <= row3 < 0.2):
             arquivos[1].writerow([row[0], row[1]])
-        elif((row3 >= 0.2) and (row3 < 0.3)):
+        elif (0.2 <= row3 < 0.3):
             arquivos[2].writerow([row[0], row[1]])
-        elif((row3 >= 0.3) and (row3 < 0.4)):
+        elif (0.3 <= row3 < 0.4):
             arquivos[3].writerow([row[0], row[1]])
-        elif((row3 >= 0.4) and (row3 < 0.5)):
+        elif (0.4 <= row3 < 0.5):
             arquivos[4].writerow([row[0], row[1]])
-        elif((row3 >= 0.5) and (row3 < 0.6)):
+        elif (0.5 <= row3 < 0.6):
             arquivos[5].writerow([row[0], row[1]])
-        elif((row3 >= 0.6) and (row3 < 0.7)):
+        elif (0.6 <= row3 < 0.7):
             arquivos[6].writerow([row[0], row[1]])
-        elif((row3 >= 0.7) and (row3 < 0.8)):
+        elif (0.7 <= row3 < 0.8):
             arquivos[7].writerow([row[0], row[1]])
-        elif((row3 >= 0.8) and (row3 < 0.9)):
+        elif (0.8 <= row3 < 0.9):
             arquivos[8].writerow([row[0], row[1]])
-        elif((row3 >= 0.9) and (row3 <= 1)):
+        elif (0.9 <= row3 <= 1):
             arquivos[9].writerow([row[0], row[1]])
 
 print("Finish!")

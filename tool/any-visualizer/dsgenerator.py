@@ -228,25 +228,25 @@ with open('dataanalysis/ds.csv') as f7:
     for row in csv.reader(f7):
         row2 = float(row[2])
         row3 = float(row[3])
-        if((row3 >= 0.0) and (row3 < 0.1)):
+        if (0.0 <= row3 < 0.1):
             arquivos[0].writerow([row[0], row[1]])
-        elif((row3 >= 0.1) and (row3 < 0.2)):
+        elif (0.1 <= row3 < 0.2):
             arquivos[1].writerow([row[0], row[1]])
-        elif((row3 >= 0.2) and (row3 < 0.3)):
+        elif (0.2 <= row3 < 0.3):
             arquivos[2].writerow([row[0], row[1]])
-        elif((row3 >= 0.3) and (row3 < 0.4)):
+        elif (0.3 <= row3 < 0.4):
             arquivos[3].writerow([row[0], row[1]])
-        elif((row3 >= 0.4) and (row3 < 0.5)):
+        elif (0.4 <= row3 < 0.5):
             arquivos[4].writerow([row[0], row[1]])
-        elif((row3 >= 0.5) and (row3 < 0.6)):
+        elif (0.5 <= row3 < 0.6):
             arquivos[5].writerow([row[0], row[1]])
-        elif((row3 >= 0.6) and (row3 < 0.7)):
+        elif (0.6 <= row3 < 0.7):
             arquivos[6].writerow([row[0], row[1]])
-        elif((row3 >= 0.7) and (row3 < 0.8)):
+        elif (0.7 <= row3 < 0.8):
             arquivos[7].writerow([row[0], row[1]])
-        elif((row3 >= 0.8) and (row3 < 0.9)):
+        elif (0.8 <= row3 < 0.9):
             arquivos[8].writerow([row[0], row[1]])
-        elif((row3 >= 0.9) and (row3 <= 1)):
+        elif (0.9 <= row3 <= 1):
             arquivos[9].writerow([row[0], row[1]])
 
 print("Finish!")

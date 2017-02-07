@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import operator
 import datetime
 import diversity
 from random import randint
@@ -7,14 +6,14 @@ from random import randint
 
 def get_distances_of(elements, k, distance_by_id):
     my_distances = []
-    for i in range(0, k):
+    for i in range(k):
         my_distances.append(distance_by_id[elements[i]])
     return my_distances
 
 
 def make_new_records(elements, new_element, k, records):
     output = {}
-    for i in range(0, k):
+    for i in range(k):
         output[i] = elements[i]
     replacement = randint(0, k - 1)
     output[replacement] = records[new_element]
@@ -59,24 +58,24 @@ def runIuga(input_g, kvalue, time_limit, lowest_acceptable_similarity):
     distances = {}
 
     # read input file
-    f = open(input_file)
-    for line in f:
-        line = line.strip()
-        parts = line.split(",")
-        from_id = int(parts[0])
-        if from_id > input_g:
-            break
-        to_id = int(parts[1])
-        similarity = float(parts[2])
-        distance = float(parts[3])
-        similarities[to_id] = similarity
-        distances[to_id] = distance
+    with open(input_file) as f:
+        for line in f:
+            line = line.strip()
+            parts = line.split(",")
+            from_id = int(parts[0])
+            if from_id > input_g:
+                break
+            to_id = int(parts[1])
+            similarity = float(parts[2])
+            distance = float(parts[3])
+            similarities[to_id] = similarity
+            distances[to_id] = distance
 
     # sorting similarities and distances in descending order
     similarities_sorted = sorted(
-        similarities.items(), key=operator.itemgetter(1), reverse=True)
+        similarities.items(), key=lambda x: x[1], reverse=True)
     distances_sorted = sorted(
-        distances.items(), key=operator.itemgetter(1), reverse=True)
+        distances.items(), key=lambda x: x[1], reverse=True)
 
     # begin - prepare lists for easy retrieval
     records = {}
@@ -100,7 +99,7 @@ def runIuga(input_g, kvalue, time_limit, lowest_acceptable_similarity):
     # end - retrieval functions
 
     # initialization by k most similar records
-    for i in range(0, k):
+    for i in range(k):
         current_records[i] = records[i]
 
     print("begin:", show(current_records, k, similarity_by_id, distance_by_id))
@@ -142,7 +141,7 @@ def runIuga(input_g, kvalue, time_limit, lowest_acceptable_similarity):
 
     min_similarity = 1
     dicToArray = []
-    for i in range(0, k):
+    for i in range(k):
         if similarity_by_id[current_records[i]] < min_similarity:
             min_similarity = similarity_by_id[current_records[i]]
         dicToArray.append(current_records[i])
