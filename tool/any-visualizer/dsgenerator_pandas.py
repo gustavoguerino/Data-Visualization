@@ -49,16 +49,19 @@ df_ends = df_ends.rename(columns={
 }).assign(is_pickup=0)
 
 df = df.append(df_ends, ignore_index=True)
-df.to_csv('pandas.index.csv', index_label='id')
 
+del df_ends
+
+df.to_csv('pandas.index.csv', index_label='id')
 
 bigger_distance = 0
 
 ds = []
-df_aux = df.loc[:, ['latitude', 'longitude']].copy()
+df_aux = df.copy()
 x = 1
 n = len(df)
-for row_a in df.loc[:, ['latitude', 'longitude']].itertuples():
+
+for row_a in df.itertuples():
     print('Left:', n - x)
     for row_b in df_aux.loc[x:].itertuples():
         distance = harvestine_distance(row_a[1], row_a[2],
@@ -67,6 +70,8 @@ for row_a in df.loc[:, ['latitude', 'longitude']].itertuples():
         if distance > bigger_distance:
             bigger_distance = distance
     x += 1
+
+del df_aux
 
 df_ds = pd.DataFrame(
     ds, columns=['id_a', 'id_b', 'distance', 'similarity']
