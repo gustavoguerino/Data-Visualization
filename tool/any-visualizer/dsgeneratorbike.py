@@ -88,15 +88,15 @@ def ignorePoint(p1, p2, p3, p4):
 # "0tripduration","1starttime","2stoptime","3start station id","4start station name",
 # "5start station latitude","6start station longitude","7end station id","8end station name",
 # "9end station latitude","10end station longitude","11bikeid","12usertype","13birth year","14gender"
-temp = csv.writer(open("tmp/temp.csv", "w"))
-index = csv.writer(open("dataanalysis/index.csv", "w"))
+temp = csv.writer(open("tmp/temp.csv", "w", newline=''))
+index = csv.writer(open("dataanalysis/index.csv", "w", newline=''))
 index.writerow(['p_index', 'dataset_line_index', 'latitude',
                 'longitude', 'hour', 'duration', 'isPickUp'])
 latpick, longpick = [5, 6]
 latdrop, longdrop = [9, 10]
 pickup_datetime, dropoff_datetime = [1, 2]
 # reading dataset
-input_dataset = open('tmp/arquivo.csv')
+input_dataset = open('tmp/arquivo.csv', newline='')
 
 # HEADER definition and its features
 header_line = input_dataset.readline()
@@ -156,7 +156,7 @@ shutil.copyfile('dataanalysis/index.csv', 'tmp/index_aux.csv')
 
 
 print("Re-opening index.csv to start operations...")
-_index = open('dataanalysis/index.csv')
+_index = open('dataanalysis/index.csv', newline='')
 _index_features = _index.readline().split(",")
 
 #-------------------------------------------------------------------------
@@ -176,7 +176,7 @@ for i in range(countlines):
     _index_values = _index[i].split(",")
     # INDEX_AUX
     #print("Opening index_aux.csv to start operations...")
-    index_aux = open('tmp/index_aux.csv')
+    index_aux = open('tmp/index_aux.csv', newline='')
     index_aux_features = index_aux.readline().split(",")
 
     index_aux = index_aux.readlines()
@@ -212,9 +212,9 @@ for i in range(countlines):
 
 
 print("Parsing distance and similarity from temp.csv to ds.csv ")
-ds = open("dataanalysis/ds.csv", "w")
+ds = open("dataanalysis/ds.csv", "w", newline='')
 dscsv = csv.writer(ds)
-with open('tmp/temp.csv') as temp_ds:
+with open('tmp/temp.csv', newline='') as temp_ds:
     for row in csv.reader(temp_ds):
         try:
             camp1 = float(row[2]) / biggerdistance
@@ -254,11 +254,11 @@ except:
 
 for val in range(0, 10):
     strfile = 'dataanalysis/dspoints/' + str(val) + '_' + str(val + 1) + '.csv'
-    arquivos.append(csv.writer(open(strfile, 'w')))
+    arquivos.append(csv.writer(open(strfile, 'w', newline='')))
     arquivos[val].writerow(['p1', 'p2'])
 
 
-with open('dataanalysis/ds.csv') as f7:
+with open('dataanalysis/ds.csv', newline='') as f7:
     for row in csv.reader(f7):
         row2 = float(row[2])
         row3 = float(row[3])
