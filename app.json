@@ -1,0 +1,6 @@
+{
+  "name": "Urban Data Visualization",
+  "description": "Aplication AnyVisualizer",
+  "image": "heroku/python",
+  "keywords": ["python", "flask" ]
+}
