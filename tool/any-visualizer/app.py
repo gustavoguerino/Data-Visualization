@@ -15,13 +15,10 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 
 # Directories config
-APP_ROOT = os.path.dirname(os.path.abspath(
-    __file__))   # refers to application_top
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 APP_TMP = os.path.join(APP_ROOT, 'tmp')
 APP_ANALYSIS = os.path.join(APP_ROOT, 'dataanalysis')
 
-app.config['UPLOAD_FOLDER'] = 'tmp/'
-app.config['UPLOAD_FOLDER_DATA'] = 'dataanalysis/'
 app.config['ALLOWED_EXTENSIONS'] = set(['csv'])
 
 # Thread to generate ds archives
@@ -150,7 +147,7 @@ def upload():
     file = request.files['file']
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'arquivo.csv'))
+        file.save(APP_ROOT + '/arquivo.csv')
         if(request.form.get('botao') == "Charts and Maps"):
             return file_proc()
         else:
