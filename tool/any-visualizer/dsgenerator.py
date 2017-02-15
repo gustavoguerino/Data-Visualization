@@ -84,8 +84,8 @@ def ignorePoint(p1, p2, p3, p4):
         return True
 
 
-temp = csv.writer(open("tmp/temp.csv", "w", newline=''))
-index = csv.writer(open("dataanalysis/index.csv", "w", newline=''))
+temp = csv.writer(open("tmp/temp.csv", "w"))
+index = csv.writer(open("dataanalysis/index.csv", "w"))
 index.writerow(['p_index', 'dataset_line_index', 'latitude', 'longitude',
                 'hour', 'passenger', 'fare_amout', 'tip_amout', 'total_amout', 'isPickUp'])
 

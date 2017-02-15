@@ -180,8 +180,8 @@ def runiuga():
     time_limit = int(request.args.get('timelimit'))  # in miliseconds
     k = int(request.args.get('kvalue'))            # number of returned records
     lowest_acceptable_similarity = float(request.args.get('sigma'))
-    compostReturn = iugaMod.runIuga(
-        input_g, k, time_limit, lowest_acceptable_similarity)
+    input_file = APP_ROOT + "/dataanalysis/ds.csv"  
+    compostReturn = iugaMod.runIuga(input_g, k, time_limit, lowest_acceptable_similarity, input_file)
     return json.dumps({"similarity": compostReturn[0], "diversity": compostReturn[1], "array": (compostReturn[2])}), 200, {'ContentType': 'application/json'}
 
 

@@ -35,10 +35,10 @@ def show(elements, k, similarity_by_id, distance_by_id):
     return out
 
 
-def runIuga(input_g, kvalue, time_limit, lowest_acceptable_similarity):
+def runIuga(input_g, kvalue, time_limit, lowest_acceptable_similarity, input_file):
     # parameters
     k = kvalue
-    input_file = "dataanalysis/ds.csv"			# indexing file
+    		# indexing file
     # should the algorithm stop if it reaches the end of the index (i.e.,
     # scanning all records once)
     stop_visiting_once = False
